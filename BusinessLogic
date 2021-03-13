@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Data.SqlClient;
+using System.Data;
+
+namespace WindowsFormsApp1
+{
+    class BusniessLogic
+    {
+        SqlConnection con;
+        SqlDataAdapter da;
+        SqlCommandBuilder cmb;
+        DataRow row;
+        DataSet ds;
+        public BusniessLogic()
+        {
+            con = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\gs21041\Documents\OJAS-DD298.mdf;Integrated Security=True;Connect Timeout=30");
+            da = new SqlDataAdapter("select * from Employee",con);
+            cmb = new SqlCommandBuilder(da);
+            ds = new DataSet();
+            da.Fill(ds, "Employee");
+            da.Update(ds.Tables[ "Employee"]);
+            ds.Tables["Employee"].Constraints.Add("empid_pk", ds.Tables["Employee"].Columns["empid"], true);
+   
+       }
+        public bool AddEmployee(Employee emp)
+        {
+            row = ds.Tables["Employee"].NewRow();
+            row["empid"] = emp.empid;
+            row["empname"] = emp.empname;
+            row["empsal"] = emp.empsal;
+            ds.Tables["Employee"].Rows.Add(row);
+            return da.Update(ds.Tables["Employee"]) == 1;
+        }
+        public bool UpdateEmployee(Employee emp)
+        {
+            row = ds.Tables["Employee"].Rows.Find(emp.empid);
+            row["empname"] = emp.empname;
+            row["empsal"] = emp.empsal;
+            ds.Tables["Employee"].Rows.Add(row);
+            return da.Update(ds.Tables["Employee"]) == 1;
+        }
+        public bool DeleteEmployee(Employee emp)
+        {
+             ds.Tables["Employee"].Rows.Find(emp.empid).Delete();
+            
+            return da.Update(ds.Tables["Employee"]) == 1;
+        }
+        public Employee FindEmployee(Employee emp)
+        {
+            row = ds.Tables["Employee"].Rows.Find(emp.empid);
+            emp.empname = row["empname"].ToString();
+            emp.empsal = Convert.ToInt32(row["empsal"]);
+
+            return emp;
+        }
+        public DataView ShowEmployee()
+        {
+            return ds.Tables["Employee"].DefaultView;
+        }
+
+
+
+    }
+
+}
