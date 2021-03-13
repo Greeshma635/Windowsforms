@@ -1,0 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace WindowsFormsApp1
+{
+    class Employee
+    {
+        public int empid { get; set; }
+        public string empname { get; set; }
+        public int empsal { get; set; }
+    }
+    
+
+
+}
